@@ -13,11 +13,11 @@ const fs = require('fs');
   }
 
   // 2. 拿 aweme_id 列表
-  const ids = await page.evaluate(() =>
-    Array.from(document.querySelectorAll('a[href*="/video/"]'))
-      .map(a => a.href.match(/\/video\/(\d+)/)?.[1])
-      .filter(Boolean)
-  );
+const ids = await page.evaluate(() => {
+  console.log(document.querySelectorAll('a[href*="/video/"]').length);
+  console.log(document.querySelector('a[href*="/video/"]')?.href);
+  return [];
+});
 
   // 3. 逐个视频页抓指标
   const videos = [];
