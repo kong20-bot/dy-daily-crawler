@@ -13,11 +13,9 @@ const fs = require('fs');
   }
 
   // 2. 拿 aweme_id 列表
-const ids = await page.evaluate(() => {
-  console.log(document.querySelectorAll('a[href*="/video/"]').length);
-  console.log(document.querySelector('a[href*="/video/"]')?.href);
-  return [];
-});
+const html = await page.content();
+fs.writeFileSync('debug.html', html);   // 把整个页面写文件
+return [];
 
   // 3. 逐个视频页抓指标
   const videos = [];
