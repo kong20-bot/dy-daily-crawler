@@ -2,7 +2,7 @@ const https = require('https');
 const fs   = require('fs');
 
 const url = 'https://v.douyin.com/BYFyL-zfB7E/';          // 抖音短链
-const api = `https://dy.2333.me/api?url=${encodeURIComponent(url)}`;; // 备用接口
+const api = `https://dy.2333.me/api?url=${encodeURIComponent(url)}`; // 备用接口
 
 https.get(api, res => {
   let body = '';
