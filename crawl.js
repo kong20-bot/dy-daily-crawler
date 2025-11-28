@@ -8,6 +8,7 @@ https.get(api, res => {
   let body = '';
   res.on('data', chunk => body += chunk);
   res.on('end', () => {
+    console.log('原始返回：', body);  // ← 看看到底是什么
     try {
       const json = JSON.parse(body);
       const data = {
