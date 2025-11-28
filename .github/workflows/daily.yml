@@ -1,34 +1,32 @@
-const https = require('https');
-const fs   = require('fs');
+name: Daily Crawl
 
-// 抖音短链
-const url = 'https://v.douyin.com/BYFyL-zfB7E/';
+on:
+  schedule:
+    - cron: '0 0 * * *'   # 每天 00:00 UTC（北京时间 8:00）
+  workflow_dispatch:      # 手动触发按钮
 
-// 稳定接口（抗风控）
-const api = `https://dy.2333.me/api?url=${encodeURIComponent(url)}`;
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-https.get(api, res => {
-  let body = '';
-  res.on('data', chunk => body += chunk);
-  res.on('end', () => {
-    try {
-      const json = JSON.parse(body);
-      const data = {
-        date: new Date().toISOString(),
-        title: json.data?.title || json.data?.desc || '无标题',
-        description: json.data?.desc || '',
-        author: json.data?.author?.nickname || ''
-      };
-      // 人为随机串，方便肉眼验证更新
-      data.random = Math.random().toString(36).slice(2, 8);
-      fs.writeFileSync('result.json', JSON.stringify(data, null, 2));
-      console.log('OK');
-    } catch (e) {
-      console.error('解析失败', e);
-      process.exit(1);
-    }
-  });
-}).on('error', e => {
-  console.error('请求失败', e);
-  process.exit(1);
-});
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install deps
+        run: npm install
+
+      - name: Run crawler
+        run: npm run crawl
+
+      - name: Commit & Push result
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add result.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "Daily update"
+          git push
